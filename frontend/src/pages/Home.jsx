@@ -1,9 +1,8 @@
 export default function Home() {
-    return (
-      <div style={{ color: 'black', padding: '2rem' }}>
-        <h1 style={{ fontSize: '2rem' }}>Welcome to Vibero</h1>
-        <p style={{ marginTop: '1rem' }}>Explore vibe-coded games created by the community.</p>
-      </div>
-    );
-  }
-  
+  return (
+    <div className="text-white p-8 min-h-screen">
+      <h1 className="text-3xl font-bold">Welcome to Vibero</h1>
+      <p className="mt-4">Explore vibe-coded games created by the community.</p>
+    </div>
+  );
+}
