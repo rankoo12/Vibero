@@ -5,6 +5,7 @@ from app.core.database import SessionLocal
 from app.core.database import Base, engine
 from app.models import user, game # make sure this import is used
 from contextlib import asynccontextmanager
+from app.routes import auth
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,7 +16,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-
+app.include_router(auth.router)
 
 # Allow frontend to talk to backend
 app.add_middleware(
