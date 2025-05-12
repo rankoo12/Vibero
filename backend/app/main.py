@@ -2,9 +2,20 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import sqlalchemy
 from app.core.database import SessionLocal
+from app.core.database import Base, engine
+from app.models import user, game # make sure this import is used
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Running lifespan startup")
+    Base.metadata.create_all(bind=engine)
+    yield
 
 
-app = FastAPI()
+
+app = FastAPI(lifespan=lifespan)
+
 
 # Allow frontend to talk to backend
 app.add_middleware(
@@ -22,4 +33,5 @@ def root():
 @app.get("/favicon.ico")
 async def favicon():
     return {}
+
 
