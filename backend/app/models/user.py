@@ -9,4 +9,5 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    games = relationship("Game", back_populates="user", cascade="all, delete")
+    games = relationship("Game", back_populates="user")
+

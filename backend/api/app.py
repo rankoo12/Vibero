@@ -6,6 +6,7 @@ from api.index import create_api_router
 from app.core.database import Base, engine
 from app.models import user, game
 from contextlib import asynccontextmanager
+from api import store
 
 load_dotenv()
 
@@ -31,5 +32,6 @@ def create_api_app() -> FastAPI:
     )
 
     app.include_router(create_api_router())
+    app.include_router(store.router)
 
     return app
