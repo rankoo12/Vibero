@@ -17,7 +17,12 @@ export default function Navbar() {
         <Link to="/store/rankoo12" className={`text-lg font-medium hover:text-blue-300 ${
           location.pathname.startsWith('/store') ? 'underline text-blue-400' : 'text-white no-underline'
         }`}>My Store</Link>
+        <Link to="/login" className={`text-lg font-medium hover:text-blue-300 ${
+          location.pathname === '/login' ? 'underline text-blue-400' : 'text-white no-underline'
+        }`}>Login
+        </Link>
       </div>
+        
     </nav>
   );
 }
