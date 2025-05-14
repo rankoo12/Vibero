@@ -11,12 +11,14 @@ export function loginUser(data) {
   return apiRequest("/auth/login", {
     method: "POST",
     body: data,
+    credentials: "include", 
   });
 }
 
-export function fetchMe(token) {
-  return apiRequest("/auth/me", {
+export function fetchMe() {
+  return apiRequest("/auth/login", {
     method: "GET",
-    token,
+    credentials: "include",  // ✅ required for cookies
   });
 }
+

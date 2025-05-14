@@ -12,4 +12,4 @@ COPY ./app ./app
 COPY ./api ./api
 
 # Run FastAPI using main.py (entry point is now in app/)
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

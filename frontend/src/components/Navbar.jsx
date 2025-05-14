@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const location = useLocation();
+  const { user } = useAuth();  // ✅ now we can check login
 
   return (
     <nav className="nav-style">
@@ -14,15 +16,21 @@ export default function Navbar() {
         <Link to="/" className={`text-lg font-medium hover:text-blue-300 ${
           location.pathname === '/' ? 'underline text-blue-400' : 'text-white no-underline'
         }`}>Home</Link>
-        <Link to="/store/rankoo12" className={`text-lg font-medium hover:text-blue-300 ${
-          location.pathname.startsWith('/store') ? 'underline text-blue-400' : 'text-white no-underline'
-        }`}>My Store</Link>
-        <Link to="/login" className={`text-lg font-medium hover:text-blue-300 ${
-          location.pathname === '/login' ? 'underline text-blue-400' : 'text-white no-underline'
-        }`}>Login
-        </Link>
+
+        {user && (
+          <Link to={`/store/${user.username}`} className={`text-lg font-medium hover:text-blue-300 ${
+            location.pathname.startsWith('/store') ? 'underline text-blue-400' : 'text-white no-underline'
+          }`}>My Store</Link>
+        )}
+
+        {user ? (
+          <div className="text-lg font-medium hover:text-blue-300">{user.username}</div>  // 🔜 Replace with dropdown
+        ) : (
+          <Link to="/login" className={`text-lg font-medium hover:text-blue-300 ${
+            location.pathname === '/login' ? 'underline text-blue-400' : 'text-white no-underline'
+          }`}>Login</Link>
+        )}
       </div>
-        
     </nav>
   );
 }

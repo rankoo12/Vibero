@@ -7,16 +7,13 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  fetchMe()
+    .then(setUser)
+    .catch(() => {
+      setUser(null);
+    });
+}, []);
 
-    fetchMe(token)
-      .then(setUser)
-      .catch(() => {
-        localStorage.removeItem("token");
-        setUser(null);
-      });
-  }, []);
 
   const logout = () => {
     localStorage.removeItem("token");

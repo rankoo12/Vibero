@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export async function apiRequest(endpoint, { method = "GET", body, token } = {}) {
+export async function apiRequest(endpoint, { method = "GET", body, token, credentials } = {}) {
   const headers = {
     "Content-Type": "application/json",
   };
@@ -10,6 +10,7 @@ export async function apiRequest(endpoint, { method = "GET", body, token } = {})
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    credentials, // ✅ this line enables cookie auth
   });
 
   const data = await res.json();
