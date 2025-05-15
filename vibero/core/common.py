@@ -1,11 +1,14 @@
 from __future__ import annotations
 from enum import Enum
 import hashlib
-from typing import Any, Mapping, NewType, Optional, Sequence, TypeAlias, Union
+from typing import Any, Mapping, NewType, Optional, Sequence, TypeAlias, Union, Callable, Awaitable
+from starlette.types import Scope, Receive, Send
 import nanoid  # type: ignore
 from pydantic import BaseModel, ConfigDict
 import semver  # type: ignore
 
+
+ASGIApplication = Callable[[Scope, Receive, Send], Awaitable[None]]
 
 def _without_dto_suffix(obj: Any, *args: Any) -> str:
     if isinstance(obj, str):

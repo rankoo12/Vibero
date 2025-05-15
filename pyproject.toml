@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "vibero"
+version = "0.1.0"
+description = "Vibero API"
+authors = ["Ran Eckstein <you@example.com>"]
+packages = [{ include = "vibero" }]
+
+[tool.poetry.scripts]
+vibero-server = "vibero.bin.server:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.0"
+uvicorn = "^0.32.0"
+click = "^8.1.7"
+click-completion = "^0.5.2"
+lagom = "^2.6.0"
+python-dotenv = "^1.0.1"
+sqlalchemy = "^2.0.30"
+asyncpg = "^0.29.0"
+nanoid = "^2.0.0"
+semver = "^3.0.4"
+structlog = "^25.3.0"
+psycopg2-binary = "^2.9.10"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

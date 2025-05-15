@@ -90,7 +90,13 @@ def create_router(user_store: UserStore) -> APIRouter:
     )
     async def update_user(user_id: UserIdPath, params: UserUpdateParamsDTO) -> UserDTO:
         user = await user_store.update_user(user_id, params.dict(exclude_unset=True))
-        return UserDTO(**{**user.__dict__, "created_at": user.created_at.isoformat()})
+        return UserDTO(
+            id=user.id,
+            username=user.username,
+            email=user.email,
+            created_at=user.created_at.isoformat(),
+        )
+
 
     @router.delete(
         "/{user_id}",

@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: postgres:17-alpine
@@ -12,7 +14,9 @@ services:
       - db_data:/var/lib/postgresql/data
 
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     depends_on:
@@ -20,7 +24,7 @@ services:
     environment:
       DATABASE_URL: postgresql://vibero:vibero123@db:5432/viberodb
     volumes:
-      - ./backend:/app
+      - .:/app
 
 volumes:
   db_data: {}
