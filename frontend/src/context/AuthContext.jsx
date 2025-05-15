@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { fetchMe } from "@/api";
+import { fetchSession } from "@/api";
 
 const AuthContext = createContext(null);
 
@@ -7,17 +7,15 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-  fetchMe()
-    .then(setUser)
-    .catch(() => {
-      setUser(null);
-    });
-}, []);
-
+    fetchSession()
+      .then(setUser)
+      .catch(() => {
+        setUser(null);
+      });
+  }, []);
 
   const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
+    setUser(null); // cookie will be cleared on backend later
   };
 
   return (

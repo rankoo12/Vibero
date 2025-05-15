@@ -1,4 +1,5 @@
 from fastapi import APIRouter, FastAPI, HTTPException, Request, Response, status
+import os
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from typing import Callable, Awaitable, TypeAlias
@@ -12,6 +13,9 @@ from vibero.api import users
 from vibero.core.users import UserStore
 
 ASGIApplication: TypeAlias = Callable[[Scope, Receive, Send], Awaitable[None]]
+frontend_origin = os.getenv("FRONTEND_ORIGIN")
+if not frontend_origin:
+    raise RuntimeError("FRONTEND_ORIGIN is not set in the environment.")
 
 
 class AppWrapper:
@@ -44,7 +48,7 @@ async def create_api_app(container: Container) -> ASGIApplication:
 
     api_app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=[frontend_origin],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

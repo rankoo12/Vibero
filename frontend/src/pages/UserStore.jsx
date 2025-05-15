@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import GameCard from '../components/GameCard';
-import { apiRequest } from '@/api';
+import apiClient from "@/api/client";
 
 export default function UserStore() {
   const { username } = useParams();
@@ -12,24 +12,13 @@ export default function UserStore() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const data = await apiRequest(`/store/${username}`, {
-          method: 'GET',
-          credentials: 'include',
-        });
+        const res = await apiClient.get(`/store/${username}`);
+        const data = res.data;
 
         setGames(data);
-
-        // Owner check
-        // await apiRequest(`/store/${username}/game`, {
-        //   method: 'POST',
-        //   credentials: 'include',
-        //   body: { title: '__check__', description: 'tmp' },
-        // });
-
-        setIsOwner(true);
-
+        setIsOwner(true); // This is temporary until owner check is restored
       } catch (err) {
-        if (err.message.includes('403')) {
+        if (err?.response?.status === 403) {
           setIsOwner(false);
         } else {
           console.error(err);

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { loginUser, fetchMe } from "@/api";
+import { loginUser } from "@/api";  // <-- new API call
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();  // ✅ called inside component
+  const { setUser } = useAuth();
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,9 +20,9 @@ export default function LoginPage() {
     setSuccess("");
 
     try {
-      await loginUser(form);         // backend sets cookie
-      const user = await fetchMe();  // ask backend who is logged in
-      setUser(user);                 // update context
+      console.log("Sending to backend:", form.username, { password: form.password });
+      const user = await loginUser(form.username, { password: form.password });
+      setUser(user);
       setSuccess("Logged in successfully!");
       setTimeout(() => navigate("/"), 1000);
     } catch (err) {
@@ -36,10 +36,10 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="space-y-4 w-full">
         <div className="flex justify-center">
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={form.username}
             onChange={handleChange}
             className="w-[90%] px-4 py-2 rounded outline-none"
             required

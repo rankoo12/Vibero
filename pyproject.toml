@@ -22,6 +22,8 @@ nanoid = "^2.0.0"
 semver = "^3.0.4"
 structlog = "^25.3.0"
 psycopg2-binary = "^2.9.10"
+passlib = { extras = ["bcrypt"], version = "^1.7" }
+python-jose = {extras = ["cryptography"], version = "^3.4.0"}
 
 [build-system]
 requires = ["poetry-core"]

@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Optional, Sequence, NewType
 from typing_extensions import TypedDict, override
 from vibero.adapters.db.models import UserModel
+from passlib.context import CryptContext
 
 from vibero.core.persistence.document_database import (
     BaseDocument,
@@ -24,6 +25,7 @@ class User:
     id: UserId
     username: str
     email: str
+    hashed_password: str
     created_at: datetime
 
 
@@ -36,6 +38,9 @@ class UserStore(ABC):
 
     @abstractmethod
     async def read_user(self, user_id: UserId) -> User: ...
+
+    @abstractmethod
+    async def get_by_username(self, username: str) -> User: ...
 
     @abstractmethod
     async def update_user(self, user_id: UserId, params: UserUpdateParams) -> User: ...
@@ -66,13 +71,17 @@ class UserDocumentStore(UserStore):
         return doc  # trusting structure, no migrations yet
 
     @override
-    async def create_user(self, username: str, email: str) -> User:
+    async def create_user(self, username: str, email: str, password: str) -> User:
         from vibero.core.common import generate_id
+
+        pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        hashed_password = pwd_ctx.hash(password)
 
         user = User(
             id=UserId(generate_id()),
             username=username,
             email=email,
+            hashed_password=hashed_password,
             created_at=datetime.utcnow(),
         )
         await self._collection.insert_one(user)
@@ -87,6 +96,13 @@ class UserDocumentStore(UserStore):
         user = await self._collection.find_one({"id": user_id})
         if user is None:
             raise ValueError(f"User with id '{user_id}' not found")
+        return user
+
+    @override
+    async def get_by_username(self, username: str) -> User:
+        user = await self._collection.find_one({"username": username})
+        if user is None:
+            raise ValueError(f"User with username '{username}' not found")
         return user
 
     @override
