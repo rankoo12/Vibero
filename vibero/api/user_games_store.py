@@ -26,15 +26,17 @@ def create_router(game_repository: UserGameRepoStore) -> APIRouter:
     router = APIRouter()
 
     @router.get(
-        "/store/{username}",
+        "/{username}/games",
         response_model=Sequence[GameDTO],
     )
-    async def get_user_store(username: UsernamePath) -> Sequence[GameDTO]:
+    async def get_user_games(username: UsernamePath) -> Sequence[GameDTO]:
         try:
             games = await game_repository.get_games_by_username(username)
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 
-        return [GameDTO(**g.__dict__) for g in games]
+        return [
+            GameDTO(**g.__dict__, created_at=g.created_at.isoformat()) for g in games
+        ]
 
     return router

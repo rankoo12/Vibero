@@ -170,4 +170,11 @@ def create_router(user_store: UserStore) -> APIRouter:
 
         return UserDTO(**{**user.__dict__, "created_at": user.created_at.isoformat()})
 
+    @router.post(
+        "/{username}/logout",
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
+    async def logout_user(response: Response) -> None:
+        response.delete_cookie("session")
+
     return router

@@ -1,10 +1,10 @@
 // src/api/users.js
-import apiClient from './client';
-
+import apiClient from "./client";
+let sessionCache = null;
 // Register a new user
 export const registerUser = async (data) => {
   try {
-    const res = await apiClient.post('/users', data);
+    const res = await apiClient.post("/users", data);
     return res.data; // If needed
   } catch (err) {
     // Extract useful backend error message
@@ -21,13 +21,14 @@ export async function loginUser(username, data) {
     data,
     { withCredentials: true } // ✅ ensure cookies are handled
   );
-  return res.data;  // user object
+  return res.data; // user object
 }
 
 // Restore session from cookie
 export async function fetchSession() {
-  const res = await apiClient.get('/users/session', {
-    withCredentials: true, // ✅ same here for cookie session
-  });
-  return res.data;  // user object
+  if (sessionCache !== null) return sessionCache;
+
+  const res = await apiClient.get("/users/session");
+  sessionCache = res.data;
+  return sessionCache;
 }

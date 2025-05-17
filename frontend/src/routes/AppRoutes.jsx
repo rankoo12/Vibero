@@ -10,8 +10,8 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/store/:username" element={<UserStore />} />
-      <Route path="/store/:username/:gameId" element={<GamePage />} />
+      {/*<Route path="/store/:username" element={<UserStore />} /> */}
+      <Route path="/store/:username/games" element={<UserStore />} />
       
       {/* 🔐 Auth routes */}
       <Route path="/register" element={<RegisterPage />} />
