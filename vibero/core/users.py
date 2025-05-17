@@ -27,6 +27,7 @@ class User:
     email: str
     hashed_password: str
     created_at: datetime
+    role: str
 
 
 class UserStore(ABC):
@@ -72,7 +73,7 @@ class UserDocumentStore(UserStore):
 
     @override
     async def create_user(self, username: str, email: str, password: str) -> User:
-        from vibero.core.common import generate_id
+        from vibero.core.common import generate_id, default_user_role
 
         pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
         hashed_password = pwd_ctx.hash(password)
@@ -83,6 +84,7 @@ class UserDocumentStore(UserStore):
             email=email,
             hashed_password=hashed_password,
             created_at=datetime.utcnow(),
+            role=default_user_role(),
         )
         await self._collection.insert_one(user)
         return user

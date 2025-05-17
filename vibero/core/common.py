@@ -1,7 +1,17 @@
 from __future__ import annotations
 from enum import Enum
 import hashlib
-from typing import Any, Mapping, NewType, Optional, Sequence, TypeAlias, Union, Callable, Awaitable
+from typing import (
+    Any,
+    Mapping,
+    NewType,
+    Optional,
+    Sequence,
+    TypeAlias,
+    Union,
+    Callable,
+    Awaitable,
+)
 from starlette.types import Scope, Receive, Send
 import nanoid  # type: ignore
 from pydantic import BaseModel, ConfigDict
@@ -9,6 +19,7 @@ import semver  # type: ignore
 
 
 ASGIApplication = Callable[[Scope, Receive, Send], Awaitable[None]]
+
 
 def _without_dto_suffix(obj: Any, *args: Any) -> str:
     if isinstance(obj, str):
@@ -94,3 +105,7 @@ def generate_id() -> UniqueId:
         new_id = nanoid.generate(size=10)
         if "-" not in (new_id[0], new_id[-1]) and "_" not in new_id:
             return UniqueId(new_id)
+
+
+def default_user_role() -> str:
+    return "regular"

@@ -9,8 +9,9 @@ from lagom import Container
 from vibero.core.common import generate_id, ItemNotFoundError
 from vibero.core.contextual_correlator import ContextualCorrelator
 from vibero.core.loggers import Logger
-from vibero.api import users
+from vibero.api import user_games_store, users
 from vibero.core.users import UserStore
+from vibero.core.user_games_store import UserGameRepoStore
 
 ASGIApplication: TypeAlias = Callable[[Scope, Receive, Send], Awaitable[None]]
 frontend_origin = os.getenv("FRONTEND_ORIGIN")
@@ -33,6 +34,7 @@ async def create_api_app(container: Container) -> ASGIApplication:
     correlator = container[ContextualCorrelator]
     logger = container[Logger]
     user_store = container[UserStore]
+    user_game_repository = container[UserGameRepoStore]
 
     api_app = FastAPI()
 
@@ -78,17 +80,26 @@ async def create_api_app(container: Container) -> ASGIApplication:
             detail=str(exc),
         )
 
-    users_router = APIRouter(prefix="/users")
+    # USERS - all user-related functionality is grouped under /users
+    # Includes: create user, login, session, update/delete profile, etc.
+    users_router = APIRouter()
     users_router.include_router(
-        router=users.create_router(user_store=user_store),
-        prefix="/users",
-        tags=["users"],
+        prefix="/users",  # URL prefix for all user routes
+        tags=["users"],  # Tag used in Swagger/OpenAPI docs
+        router=users.create_router(user_store=user_store),  # User API logic
     )
+    api_app.include_router(users_router)
 
-    api_app.include_router(
-        users.create_router(user_store=user_store),
-        prefix="/users",
-        tags=["users"],
+    # USER STORE - public storefront for a user, under /store/{username}
+    # Includes: fetch games by username, later analytics/upload/settings
+    user_store_router = APIRouter()
+    user_store_router.include_router(
+        prefix="/store",  # Public-facing store path
+        tags=["store"],  # Tag for grouping in docs
+        router=user_games_store.create_router(  # Game listing logic
+            game_repository=user_game_repository
+        ),
     )
+    api_app.include_router(user_store_router)
 
     return AppWrapper(api_app)

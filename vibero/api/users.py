@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Path, status, Response, HTTPException, Request
 from pydantic import Field
-from typing import Annotated, Optional, Sequence, TypeAlias
+from typing import Annotated, Optional, Sequence, TypeAlias, Literal
+import enum
 
 from vibero.core.users import UserStore, UserId
 from vibero.core.common import DefaultBaseModel
@@ -41,17 +42,33 @@ UserEmailField: TypeAlias = Annotated[
 ]
 
 
+class UserRole(str, enum.Enum):
+    regular = "regular"
+    publisher = "publisher"
+
+
+UserRoleField: TypeAlias = Annotated[
+    Literal[UserRole.regular, UserRole.publisher],
+    Field(description="Role of the user", examples=[UserRole.regular.value]),
+]
+
+
 class UserDTO(DefaultBaseModel):
     id: UserId
     username: UsernameField
     email: UserEmailField
-    created_at: str  # Or datetime if your serializer handles it
+    created_at: str
+    role: str
 
 
 class UserCreationParamsDTO(DefaultBaseModel):
     username: UsernameField
     email: UserEmailField
     password: Annotated[str, Field(min_length=6, max_length=128)]
+    role: UserRoleField = Field(
+        default=UserRole.regular,
+        description="Role of the user (e.g., regular or publisher)",
+    )
 
 
 class UserUpdateParamsDTO(DefaultBaseModel):

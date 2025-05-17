@@ -4,10 +4,12 @@ import asyncio
 import uvicorn
 import click
 from lagom import Container
+from vibero.api import user_games_store
 from vibero.api.app import create_api_app
 from vibero.core.contextual_correlator import ContextualCorrelator
 from vibero.core.loggers import StdoutLogger, Logger, LogLevel
 from vibero.core.users import UserStore, UserDocumentStore
+from vibero.core.user_games_store import UserGameRepoStore, UserGameRepoDocumentStore
 from vibero.adapters.db.postgres import PostgresDB
 from vibero.core.common import ASGIApplication
 
@@ -24,6 +26,9 @@ async def setup_container(log_level: str) -> Container:
     db.init_db()
     user_store = await UserDocumentStore(db).__aenter__()
     container[UserStore] = user_store
+
+    user_games_store = await UserGameRepoDocumentStore(db).__aenter__()
+    container[UserGameRepoStore] = user_games_store
 
     return container
 
